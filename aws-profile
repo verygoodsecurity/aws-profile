@@ -38,12 +38,14 @@ def configure_cache(session):
     provider.cache = FixedJSONFileCache()
 
 def parse_args(argv=sys.argv):
-    if len(argv) < 3:
-        print("Usage: %s profile command [args]" % os.path.basename(argv[0]))
+    profile = os.getenv('AWS_DEFAULT_PROFILE')
+    if not profile: profile = os.getenv('AWS_PROFILE')
+
+    if not profile or len(argv) < 2:
+        print("Usage: AWS_DEFAULT_PROFILE=profile %s command [args]" % os.path.basename(argv[0]))
         quit(1)
 
-    profile = argv[1]
-    command = " ".join(argv[2:])
+    command = " ".join(argv[1:])
     return (profile, command)
 
 if __name__ == '__main__':
