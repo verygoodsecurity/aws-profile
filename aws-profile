@@ -41,8 +41,11 @@ def parse_args(argv=sys.argv):
     profile = os.getenv('AWS_DEFAULT_PROFILE')
     if not profile: profile = os.getenv('AWS_PROFILE')
 
-    if not profile or len(argv) < 2:
-        print("Usage: AWS_DEFAULT_PROFILE=profile %s command [args]" % os.path.basename(argv[0]))
+    if not profile and len(argv) >= 3:
+        profile = argv.pop(1)
+
+    if not profile:
+        print("Usage: %s [profile] command [args]" % os.path.basename(argv[0]))
         quit(1)
 
     command = " ".join(argv[1:])
