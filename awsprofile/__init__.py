@@ -11,11 +11,7 @@ import json
 import os
 import sys
 
-try:
-    import botocore.session
-except ImportError:
-    print 'You do not have botocore installed. You can install it using:\n\npip install botocore\n'
-    sys.exit(1)
+import botocore.session
 
 from awscli.utils import json_encoder
 from awscli.customizations.assumerole import JSONFileCache
@@ -55,7 +51,7 @@ def parse_args(argv=sys.argv):
     command = " ".join(argv[1:])
     return (profile, command)
 
-if __name__ == '__main__':
+def main():
     profile, command = parse_args()
     session = botocore.session.Session(profile=profile)
     configure_cache(session)
@@ -82,3 +78,6 @@ if __name__ == '__main__':
     my_env = os.environ.copy()
     command_status = os.system(command)
     exit(os.WEXITSTATUS(command_status))
+
+if __name__ == '__main__':
+    main()
