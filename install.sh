@@ -14,7 +14,9 @@ fi
 
 chmod 755 aws-profile
 
-echo "export PATH=$HOME/bin:$PATH" >> $HOME/.bash_profile
+if ! grep "export PATH=\$HOME/bin:\$PATH" $HOME/.bash_profile; then
+	echo "export PATH=\$HOME/bin:\$PATH" >> $HOME/.bash_profile
+fi
 
 echo "aws-profile has been installed."
 echo "You will need to manually run"

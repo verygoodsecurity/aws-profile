@@ -11,7 +11,11 @@ import json
 import os
 import sys
 
-import botocore.session
+try:
+    import botocore.session
+except ImportError:
+    print 'You do not have botocore installed. You can install it using:\n\npip install botocore\n'
+    sys.exit(1)
 
 from awscli.utils import json_encoder
 from awscli.customizations.assumerole import JSONFileCache
