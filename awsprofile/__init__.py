@@ -73,7 +73,10 @@ def main():
     os.putenv('AWS_ACCESS_KEY_ID', creds.access_key)
     os.putenv('AWS_SECRET_ACCESS_KEY', creds.secret_key)
     if creds.token:
-        os.putenv('AWS_SESSION_TOKEN', creds.token)
+        if os.getenv('AWS_TOKEN_TYPE') == 'security':
+            os.putenv('AWS_SECURITY_TOKEN', creds.token)
+        else:
+            os.putenv('AWS_SESSION_TOKEN', creds.token)
 
     my_env = os.environ.copy()
     command_status = os.system(command)
