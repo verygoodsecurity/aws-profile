@@ -10,6 +10,7 @@
 import json
 import os
 import sys
+import subprocess
 
 import botocore.session
 
@@ -48,7 +49,7 @@ def parse_args(argv=sys.argv):
         print("Usage: %s [profile] command [args]" % os.path.basename(argv[0]))
         quit(1)
 
-    command = " ".join(argv[1:])
+    command = argv[1:]
     return (profile, command)
 
 def main():
@@ -78,9 +79,12 @@ def main():
         else:
             os.putenv('AWS_SESSION_TOKEN', creds.token)
 
-    my_env = os.environ.copy()
-    command_status = os.system(command)
-    exit(os.WEXITSTATUS(command_status))
+
+    returncode = subprocess.call(
+        command, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr
+    )
+
+    exit(os.WEXITSTATUS(returncode))
 
 if __name__ == '__main__':
     main()
