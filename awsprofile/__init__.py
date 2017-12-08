@@ -40,6 +40,13 @@ def configure_cache(session):
 
 def parse_args(argv=sys.argv):
     profile = os.getenv('AWS_DEFAULT_PROFILE')
+    cache = os.getenv('AWS_CACHE','true')
+
+    if cache.lower() != 'false':
+        cache = 'true'
+    else:
+        cache = 'false'
+
     if not profile: profile = os.getenv('AWS_PROFILE')
 
     if not profile and len(argv) >= 3:
@@ -50,12 +57,13 @@ def parse_args(argv=sys.argv):
         quit(1)
 
     command = argv[1:]
-    return (profile, command)
+    return (profile, command, cache)
 
 def main():
-    profile, command = parse_args()
+    profile, command, cache = parse_args()
     session = botocore.session.Session(profile=profile)
-    configure_cache(session)
+    if cache == 'true':
+        configure_cache(session)
     config = session.get_scoped_config()
     creds = session.get_credentials()
 
