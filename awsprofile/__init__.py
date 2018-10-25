@@ -92,7 +92,7 @@ def main():
         command, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr
     )
 
-    exit(os.WEXITSTATUS(returncode))
+    exit(sys.exit(returncode))
 
 if __name__ == '__main__':
     main()
