@@ -8,7 +8,6 @@ from os import path
 here = path.abspath(path.dirname(__file__))
 
 requires = [
-    'awscli>=1.16.31',
     'botocore>=1.3.15'
 ]
 
