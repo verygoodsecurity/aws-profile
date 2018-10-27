@@ -3,3 +3,6 @@
 *.egg-info
 dist
 *.py[co]
+venv
+.coverage
+.idea
