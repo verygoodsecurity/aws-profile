@@ -1,6 +1,18 @@
 aws-profile
 ===========
 
+.. image:: https://img.shields.io/travis/jrstarke/aws-profile/master.svg?style=flat-square
+    :target: https://travis-ci.org/jrstarke/aws-profile
+
+.. image:: https://img.shields.io/pypi/v/aws-profile.svg?style=flat-square
+    :target: https://pypi.python.org/pypi/aws-profile
+
+.. image:: https://img.shields.io/pypi/pyversions/aws-profile.svg?style=flat-square
+    :target: https://pypi.python.org/pypi/aws-profile
+
+.. image:: https://img.shields.io/pypi/implementation/coveralls.svg?style=flat-square
+    :target: https://pypi.python.org/pypi/aws-profile
+
 Wrapper script to generate and pass AWS AssumeRole keys to other scripts
 
 
