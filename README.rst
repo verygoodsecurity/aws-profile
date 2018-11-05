@@ -22,13 +22,15 @@ Wrapper script to generate and pass AWS AssumeRole keys to other scripts
 Usage
 -----
 
-There are two primary ways to use **aws-profile**, inline and with environment variables.
+There are two primary ways to use **aws-profile**, inline using arguments and with environment variables.
 
 **Inline Profile Name**
 
-`aws-profile <profile> <command>`
+`aws-profile [-p, --profile <profile name>] <command>`
 
 **Profile Environment Variable**
+
+`AWS_DEFAULT_PROFILE='<profile>' aws-profile <command>`
 
 `AWS_PROFILE='<profile>' aws-profile <command>`
 

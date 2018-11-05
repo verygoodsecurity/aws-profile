@@ -6,7 +6,7 @@
 # This script processes the configuration using boto (which supports this) and exports
 #     environment variables which are standardised for use with less current SDKs
 #
-
+import argparse
 import json
 import os
 import sys
@@ -38,8 +38,14 @@ def configure_cache(session):
     provider = cred_chain.get_provider('assume-role')
     provider.cache = FixedJSONFileCache()
 
-def parse_args(argv=sys.argv):
-    profile = os.getenv('AWS_DEFAULT_PROFILE')
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-p", "--profile", help="set the AWS profile to use, this would override AWS environment variables",
+                        required=False, default=None)
+    parser.add_argument("command", nargs=argparse.REMAINDER)
+    args = parser.parse_args()
+
     cache = os.getenv('AWS_CACHE','true')
 
     if cache.lower() != 'false':
@@ -47,17 +53,11 @@ def parse_args(argv=sys.argv):
     else:
         cache = 'false'
 
-    if not profile: profile = os.getenv('AWS_PROFILE')
+    if not args.command:
+        parser.print_help()
+        sys.exit(1)
+    return (args.profile, args.command, cache)
 
-    if not profile and len(argv) >= 3:
-        profile = argv.pop(1)
-
-    if not profile:
-        print("Usage: %s [profile] command [args]" % os.path.basename(argv[0]))
-        quit(1)
-
-    command = argv[1:]
-    return (profile, command, cache)
 
 def main():
     profile, command, cache = parse_args()
@@ -71,8 +71,6 @@ def main():
     os.unsetenv('AWS_ACCESS_KEY_ID')
     os.unsetenv('AWS_SECRET_ACCESS_KEY')
     os.unsetenv('AWS_SESSION_TOKEN')
-    os.unsetenv('AWS_DEFAULT_PROFILE')
-    os.unsetenv('AWS_PROFILE')
 
     region = config.get('region', None)
     if region:
