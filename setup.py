@@ -76,7 +76,7 @@ setup(
     install_requires=requires,
 
     extras_require={
-        'dev': ['pytest', 'pytest-cov', 'pytest-mock'],
+        'dev': ['pytest', 'pytest-cov', 'pytest-mock', 'coveralls'],
     },
 
     # To provide executable scripts, use entry points in preference to the

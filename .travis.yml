@@ -13,3 +13,5 @@ matrix:
       sudo: true
 install: pip install -e ".[dev]"
 script: py.test --cov-report=xml --cov-report=html --cov-report term-missing --cov=awsprofile
+after_success:
+  - coveralls
