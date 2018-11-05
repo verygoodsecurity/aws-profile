@@ -4,6 +4,9 @@ aws-profile
 .. image:: https://img.shields.io/travis/jrstarke/aws-profile/master.svg?style=flat-square
     :target: https://travis-ci.org/jrstarke/aws-profile
 
+.. image:: https://img.shields.io/coveralls/jrstarke/aws-profile/master.svg?style=flat-square
+    :target: https://coveralls.io/r/jrstarke/aws-profile
+
 .. image:: https://img.shields.io/pypi/v/aws-profile.svg?style=flat-square
     :target: https://pypi.python.org/pypi/aws-profile
 
