@@ -7,61 +7,40 @@ from awsprofile import parse_args
 
 @pytest.fixture(autouse=True)
 def setup_environment():
-    for environment_variable in ['AWS_PROFILE', 'AWS_DEFAULT_PROFILE', 'AWS_CACHE']:
+    for environment_variable in ['AWS_CACHE']:
         try:
             del os.environ[environment_variable]
         except KeyError:
             pass
 
 
-def test_parse_args_no_envs_or_args():
-    """With no envvars and no profile option it should raise an exception caused by quit"""
+@pytest.mark.parametrize("command_line", ['aws-profile', 'aws-profile -p default', 'aws-profile --profile default'])
+def test_empty_command_prints_help(command_line, capsys, mocker):
+    """When no command is provided ensure the usage is printed and SystemExit is raised"""
+    mocker.patch('sys.argv', command_line.split(' '))
     with pytest.raises(SystemExit):
-        argv_test_data = ['aws-profile', 'command']
-        parse_args(argv=argv_test_data)
+        parse_args()
+    out, err = capsys.readouterr()
+    assert out.startswith('usage')
 
 
-def test_parse_args_with_profile_arg():
-    """With no envvars and a profile set on the command line it should return the correct profile name, the command[s] and the default cache of true """
-    argv_test_data = ['aws-profile', 'test-profile-name', 'test-command-name']
-    result = parse_args(argv=argv_test_data)
-    assert ('test-profile-name', ['test-command-name'], 'true') == result
-
-
-def test_parse_args_with_aws_profile_env_set():
-    """With AWS_PROFILE set and no profile set on the command line it should return the profile name from AWS_PROFILE, the command[s] and the default cache of true """
-    argv_test_data = ['aws-profile', 'test-command-name']
-    os.environ['AWS_PROFILE'] = 'profile-from-aws-profile-envvar'
-    result = parse_args(argv=argv_test_data)
-    assert ('profile-from-aws-profile-envvar', ['test-command-name'], 'true') == result
-
-
-def test_parse_args_with_aws_default_profile_env_set():
-    """With AWS_DEFAULT_PROFILE set and no profile set on the command line it should return the correct profile name from AWS_DEFAULT_PROFILE, the command[s] and the default cache of true """
-    argv_test_data = ['aws-profile', 'test-command-name']
-    os.environ['AWS_DEFAULT_PROFILE'] = 'profile-from-aws-default-profile-envvar'
-    result = parse_args(argv=argv_test_data)
-    assert ('profile-from-aws-default-profile-envvar', ['test-command-name'], 'true') == result
-
-
-@pytest.mark.skip(reason="This test fails as the implementation in code is incorrect see https://github.com/aws/aws-cli/issues/2597 which infers AWS_PROFILE should be used over AWS_DEFAULT_PROFILE")
-def test_parse_args_with_aws_default_profile_and_aws_profile_env_set():
-    """With AWS_PROFILE and AWS_DEFAULT_PROFILE set and no profile set on the command line it should return the correct profile name from AWS_PROFILE, the command[s] and the default cache of true """
-    argv_test_data = ['aws-profile', 'test-command-name']
-    os.environ['AWS_DEFAULT_PROFILE'] = 'profile-from-aws-default-profile-envvar'
-    os.environ['AWS_PROFILE'] = 'profile-from-aws-profile-envvar'
-    result = parse_args(argv=argv_test_data)
-    assert ('profile-from-aws-profile-envvar', ['test-command-name'], 'true') == result
-
-
-@pytest.mark.skip(reason="This test fails as the implementation in code is ambiguous is it a profile or is it part of the command? Should we add argparse and a named option?")
-def test_parse_args_with_aws_default_profile_and_aws_profile_env_set_and_profile_provided():
-    """With AWS_PROFILE and AWS_DEFAULT_PROFILE set and profile set on the command line it should return the correct profile name from AWS_PROFILE, the command[s] and the default cache of true """
-    argv_test_data = ['aws-profile', 'test-profile-name', 'test-command-name']
-    os.environ['AWS_DEFAULT_PROFILE'] = 'profile-from-aws-default-profile-envvar'
-    os.environ['AWS_PROFILE'] = 'profile-from-aws-profile-envvar'
-    result = parse_args(argv=argv_test_data)
-    assert ('profile-from-aws-profile-envvar', ['test-command-name'], 'true') == result
+@pytest.mark.parametrize("command_line,expected_profile,expected_commands",
+                         [("aws-profile command", None, ["command"]),
+                          ("aws-profile command -a argument", None, ["command", "-a", "argument"]),
+                          ("aws-profile -p test-profile-name command", 'test-profile-name', ["command"]),
+                          ("aws-profile -p test-profile-name command -a argument", 'test-profile-name',
+                           ["command", "-a", "argument"]),
+                          ("aws-profile --profile long-test-profile-name command", 'long-test-profile-name',
+                           ["command"]),
+                          (
+                                  "aws-profile --profile long-test-profile-name command -a argument",
+                                  'long-test-profile-name', ["command", "-a", "argument"])]
+                         )
+def test_profile_is_set_as_expected(command_line, expected_profile, expected_commands, mocker):
+    """It should return the correct value for the profile, the option from the command line if present or None"""
+    mocker.patch('sys.argv', command_line.split(' '))
+    result = parse_args()
+    assert (expected_profile, expected_commands, 'true') == result
 
 
 @pytest.mark.parametrize("envvar,expected", [
@@ -75,9 +54,9 @@ def test_parse_args_with_aws_default_profile_and_aws_profile_env_set_and_profile
      ("fAlse", "false"),
      ("False", "false")
 ])
-def test_cache_envar_set_to_anything_other_than_false_or_FALSE(envvar, expected):
+def test_cache_envar_set_to_anything_other_than_false_or_FALSE(envvar, expected, mocker):
     """With AWS_CACHE env var set to anything other than false (case insensitive) it should return the string 'true'"""
+    mocker.patch('sys.argv', ['aws-profile', 'test-command-name'])
     os.environ['AWS_CACHE'] = envvar
-    argv_test_data = ['aws-profile', 'test-profile-name', 'test-command-name']
-    result = parse_args(argv=argv_test_data)
-    assert ('test-profile-name', ['test-command-name'], expected) == result
+    result = parse_args()
+    assert (None, ['test-command-name'], expected) == result
