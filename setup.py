@@ -13,26 +13,26 @@ requires = [
 ]
 
 # Get the long description from the README file
-with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
+with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='aws-profile',
+    name='vgs-aws-profile',
 
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.5.0',
+    version='0.6.1',
 
     description='A wrapper for executing a command using AWS Assumed Role',
     long_description=long_description,
 
     # The project's main homepage.
-    url='https://github.com/jrstarke/aws-profile',
+    url='https://github.com/verygoodsecurity/aws-profile',
 
     # Author details
-    author='Jamie Starke',
-    author_email='github@jamiestarke.com',
+    author='Zinovii Dmytriv',
+    author_email='zinovii.dmytriv@verygood.systems',
 
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
@@ -83,7 +83,7 @@ setup(
     # pip to create the appropriate form of executable for the target platform.
     entry_points={
         'console_scripts': [
-            'aws-profile = awsprofile:main',
+            'vgs-aws-profile = awsprofile:main',
         ],
     },
 )
