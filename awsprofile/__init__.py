@@ -81,6 +81,9 @@ def main():
 
     region = region if region is not None else config.get('region', None)
 
+    if profile:
+        os.putenv('AWS_PROFILE', profile)
+
     if region:
         os.putenv('AWS_DEFAULT_REGION', region)
         os.putenv('AWS_REGION', region)
