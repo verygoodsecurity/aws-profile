@@ -8,8 +8,8 @@ from os import path
 here = path.abspath(path.dirname(__file__))
 
 requires = [
-    'botocore>=1.15.20',
-    'awscli>=1.18.20'
+    'botocore>=1.3.15',
+    'awscli>=1.14.10'
 ]
 
 # Get the long description from the README file
